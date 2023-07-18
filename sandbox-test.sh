@@ -1,29 +1,11 @@
 #!/usr/bin/env bash
 
 # Parse command line arguments
-for arg in "$@"
-do
-    case $arg in
-        --url=*)
-        URL="${arg#*=}"
-        shift
-        ;;
-        --timeout=*)
-        TIMEOUT="${arg#*=}"
-        shift
-        ;;
-        *)
-        OTHER_ARGUMENTS+=("$1")
-        shift
-        ;;
-    esac
-done
-
-# Set the default timeout value if not provided
-TIMEOUT="${TIMEOUT:-60}"
+URL=$1
 
 # Create a temporary VM and run it
 tart clone ventura-ci-vanilla-base ventura-temp
+echo "Starting VM and opening link $URL..."
 tart run ventura-temp --net-softnet &
 sleep 10
 
@@ -31,14 +13,11 @@ sleep 10
 IP=$(tart ip ventura-temp)
 
 # SSH into the VM using provided credentials
-ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa runner@$IP << EOF
-    # Open the specified URL in Chrome
-    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window $URL &
+echo "Close this VM using command + C"
+ssh -o StrictHostKeyChecking=no -tt runner@$IP > /dev/null 2>&1 << EOF
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window $URL > /dev/null 2>&1
 EOF
 
-# Wait for the specified timeout duration
-sleep $TIMEOUT
-
 # Stop and clean up the VM
-tart stop ventura-temp
+tart stop ventura-temp 2> /dev/null
 tart delete ventura-temp
