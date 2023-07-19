@@ -7,6 +7,7 @@ URL=$1
 tart clone ventura-ci-vanilla-base ventura-temp
 echo "Starting VM and opening link $URL..."
 tart run ventura-temp --net-softnet &
+# Because apple doesn't let you check via API if the VM fully started in Ventura
 sleep 10
 
 # Get the IP address of the VM
