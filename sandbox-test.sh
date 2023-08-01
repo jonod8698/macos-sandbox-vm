@@ -18,6 +18,7 @@ if [ ! -z "$URL" ]; then
 else
     echo "Starting VM and running the file $FILE_PATH..."
 fi
+# start cloned vm with isolated networking
 tart run ventura-temp --net-softnet &
 # Because apple doesn't let you check via API if the VM fully started in Ventura
 
@@ -39,7 +40,7 @@ elif [ ! -z "$FILE_PATH" ]; then
 # Copy file to VM
 scp -o StrictHostKeyChecking=no $FILE_PATH runner@$IP:/tmp/
 
-# Run the script
+# Simulate double clicking the file 
 ssh -o StrictHostKeyChecking=no -tt runner@$IP > /dev/null 2>&1 << EOF
 open /tmp/$(basename $FILE_PATH)
     
