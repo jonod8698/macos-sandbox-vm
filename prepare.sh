@@ -14,7 +14,7 @@ sleep 10
 #Get ip address of VM
 IP=$(tart ip $BASE_IMAGE)
 # echo ask user to enter "runner" as password
-echo "Enter 'runner' as the password'
+echo "Enter 'runner' as the password"
 ssh-copy-id -f runner@$IP
 sleep 500
 # stop tart base VM
