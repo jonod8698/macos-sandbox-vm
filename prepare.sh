@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 tart stop $BASE_IMAGE 2> /dev/null
 BASE_IMAGE="ventura-ci-vanilla-base"
 tart run $BASE_IMAGE --net-softnet &
