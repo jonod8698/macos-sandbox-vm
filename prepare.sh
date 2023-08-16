@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+if ! command -v tart list &> /dev/null
+then
+    echo "<the_command> could not be found"
+    brew install tart
+    exit
+fi
 
 tart stop $BASE_IMAGE 2> /dev/null
 BASE_IMAGE="ventura-ci-vanilla-base"
