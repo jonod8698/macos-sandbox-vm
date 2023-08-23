@@ -2,7 +2,7 @@
 if ! command -v tart list &> /dev/null
 then
     echo "<the_command> could not be found"
-    brew install tart
+    brew install cirruslabs/cli/tart
     exit
 fi
 
@@ -16,6 +16,7 @@ IP=$(tart ip $BASE_IMAGE)
 # echo ask user to enter "runner" as password
 echo "Enter 'runner' as the password"
 ssh-copy-id -f runner@$IP
+echo "Initial provisioning complete. Perform any manual modifications to the base template"
 sleep 500
 # stop tart base VM
 tart stop $BASE_IMAE
