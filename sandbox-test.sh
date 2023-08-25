@@ -33,15 +33,15 @@ done
 # SSH into the VM using provided credentials
 echo "Close this VM using command + C"
 if [ ! -z "$URL" ]; then
-ssh -o StrictHostKeyChecking=no -tt runner@$IP > /dev/null 2>&1 << EOF
+ssh -o StrictHostKeyChecking=no -tt admin@$IP > /dev/null 2>&1 << EOF
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window $URL > /dev/null 2>&1
 EOF
 elif [ ! -z "$FILE_PATH" ]; then
 # Copy file to VM
-scp -o StrictHostKeyChecking=no $FILE_PATH runner@$IP:/tmp/
+scp -o StrictHostKeyChecking=no $FILE_PATH admin@$IP:/tmp/
 
 # Simulate double clicking the file 
-ssh -o StrictHostKeyChecking=no -tt runner@$IP > /dev/null 2>&1 << EOF
+ssh -o StrictHostKeyChecking=no -tt admin@$IP > /dev/null 2>&1 << EOF
 open /tmp/$(basename $FILE_PATH)
     
 EOF
