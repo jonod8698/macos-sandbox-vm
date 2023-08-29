@@ -3,6 +3,9 @@
 # Parse command line arguments
 URL=""
 FILE_PATH=""
+BASE_IMAGE="ventura-sip-disabled"
+
+
 while getopts "u:f:" flag
 do
     case "${flag}" in
@@ -12,7 +15,7 @@ do
 done
 
 # Create a temporary VM and run it
-tart clone ventura-ci-vanilla-base ventura-temp
+tart clone $BASE_IMAGE ventura-temp
 if [ ! -z "$URL" ]; then
     echo "Starting VM and opening link $URL..."
 else
@@ -35,6 +38,7 @@ echo "Close this VM using command + C"
 if [ ! -z "$URL" ]; then
 ssh -o StrictHostKeyChecking=no -tt admin@$IP > /dev/null 2>&1 << EOF
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window $URL > /dev/null 2>&1
+# Add a newline to close the VM after command execution
 EOF
 elif [ ! -z "$FILE_PATH" ]; then
 # Copy file to VM
@@ -43,7 +47,7 @@ scp -o StrictHostKeyChecking=no $FILE_PATH admin@$IP:/tmp/
 # Simulate double clicking the file 
 ssh -o StrictHostKeyChecking=no -tt admin@$IP > /dev/null 2>&1 << EOF
 open /tmp/$(basename $FILE_PATH)
-    
+# Add a newline to close the VM after command execution
 EOF
 fi
 
