@@ -5,14 +5,21 @@ URL=""
 FILE_PATH=""
 BASE_IMAGE="ventura-sip-disabled"
 
+# u - URL to open in the VM
+# f - File to run in the VM
+# t - VM duration, default no time limit
 
 while getopts "u:f:" flag
 do
     case "${flag}" in
         u) URL=${OPTARG};;
         f) FILE_PATH=${OPTARG};;
+        t) TIME_LIMIT=${OPTARG};;
+        *) echo "Invalid option: -$OPTARG" >&2
+           exit 1;;
     esac
 done
+
 
 # Create a temporary VM and run it
 tart clone $BASE_IMAGE ventura-temp
