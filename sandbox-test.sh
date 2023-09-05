@@ -3,7 +3,7 @@
 # Parse command line arguments
 URL=""
 FILE_PATH=""
-BASE_IMAGE="ventura-sip-disabled"
+BASE_IMAGE="ventura-ci-vanilla-base"
 
 # u - URL to open in the VM
 # f - File to run in the VM
