@@ -1,9 +1,26 @@
 #!/usr/bin/env bash
-# Basic usage: ./sandbox-atomicredteam.sh
+# 
+# Script to run Atomic Red Team tests in a temporary VM using the macOS virtualization framework.
+#
+# Prereqs:
+# - Host: macOS arm64 and tart https://github.com/cirruslabs/tart
+# - Base VM image: pwsh and invoke-atomicredteam
+#
+# Basic usage: ./sandbox-atomicredteam.sh -t T1553.004-3 # run test T1553.004-3
+# Command line parameters
+# -t test number e.g. T1553.004-3
+# -c bash command to run instead of automated test execution
+# -d delete vm? true/false If true, delete temp vm at end
+# -b branch
+# -r repo
+# -u username for ssh
+# -o os version
+# -h help
 
-ATOMIC_RED_TEAM_REPO="https://github.com/jonod8698/atomic-red-team.git"
-ATOMIC_RED_TEAM_BRANCH="T1539-macOS"
-ATOMIC_RED_TEAM_TEST_NUMBER="T1539-3"
+ATOMIC_RED_TEAM_REPO="https://github.com/redcanaryco/atomic-red-team.git"
+ATOMIC_RED_TEAM_BRANCH="master"
+ATOMIC_RED_TEAM_TEST_NUMBER="T1553.004-3"
+CUSTOM_COMMAND=""
 OS_VERSION="ventura"
 BASE_IMAGE=$OS_VERSION-base
 BASE_IMAGE="ventura-ci-vanilla-base" # for testing
@@ -11,19 +28,17 @@ TEMP_IMAGE=$OS_VERSION-ART-$ATOMIC_RED_TEAM_TEST_NUMBER
 macOS_username="admin"
 DELETE_TEMP_VM=true
 ATOMICS_FOLDER="./atomic-red-team/atomics"
+logging_folder="./output"
 LOGGING_MODULE="Attire-ExecutionLogger"
 
-# Command line parameters
-# -t test number
-# -d true/false delete temp vm at end
-# -b branch
-# -r repo
-# -u username
-# -o os version
-# -h help
+timestamp() {
+    date -u +"%Y-%m-%dT%H:%M:%SZ"
+}
 
-function cleanup_vm() {
-    scp admin@$IP:~/executionlog-$ATOMIC_RED_TEAM_TEST_NUMBER.json ./output/executionlog-$ATOMIC_RED_TEAM_TEST_NUMBER.json
+cleanup_vm() {
+    echo "Copying execution log from VM..."
+    scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 admin@$IP:~/$ATOMIC_RED_TEAM_TEST_NUMBER.json $logging_folder/$ATOMIC_RED_TEAM_TEST_NUMBER-$TEST_START_TIME.json
+    # use scp to copy any files you want to save from the VM to the host
     if [ "$DELETE_TEMP_VM" = true ]; then
         tart stop $TEMP_IMAGE 2> /dev/null
         tart delete $TEMP_IMAGE
@@ -31,16 +46,17 @@ function cleanup_vm() {
     fi
 }
 
-while getopts "t:b:r:u:o:h" flag
+while getopts "t:c:b:r:u:o:h" flag
 do
     case "${flag}" in
         t) ATOMIC_RED_TEAM_TEST_NUMBER=${OPTARG};;
+        c) CUSTOM_COMMAND=${OPTARG};;
         d) DELETE_TEMP_VM=${OPTARG};;
         b) ATOMIC_RED_TEAM_BRANCH=${OPTARG};;
         r) ATOMIC_RED_TEAM_REPO=${OPTARG};;
         u) macOS_username=${OPTARG};;
         o) OS_VERSION=${OPTARG};;
-        h) echo "Usage: $0 [-t ATOMIC_RED_TEAM_TEST_NUMBER] [-d true/false delete temp vm] [-b branch] [-r repo] [-u username] [-o os version] [-h help]"
+        h) echo "Usage: $0 [-t test number] [-c custom bash command] [-d delete vm (true/false)] [-b branch] [-r repo] [-u username] [-o os version]"
            exit 1;;
         *) echo "Invalid option: -$OPTARG" >&2
            exit 1;;
@@ -56,7 +72,7 @@ if [[ "$OSTYPE" != "darwin"* || "$(uname -m)" != "arm64" ]]; then
 fi
 
 tart clone $BASE_IMAGE $TEMP_IMAGE # APFS clones only consume the space of the changes made to the original image
-tart run $TEMP_IMAGE --net-softnet & # start cloned vm with isolated networking
+tart run $TEMP_IMAGE --net-softnet & # start cloned vm with isolated networking (no outbound host or local network access)
 
 # Get the IP address of the VM when it fully starts
 until IP=$(tart ip $TEMP_IMAGE 2> /dev/null)
@@ -64,21 +80,39 @@ do
     sleep 1
 done
 
-echo "Close this VM using command + C"
-
-# Provision and run atomic red team test
+# Provision atomic red team test suite
 ssh -o StrictHostKeyChecking=no -t -q $macOS_username@$IP  << EOF
+echo "------------------------------------------------------------"
+echo "Cloning $ATOMIC_RED_TEAM_REPO"
 pwsh -c "git clone --depth=1 -b $ATOMIC_RED_TEAM_BRANCH $ATOMIC_RED_TEAM_REPO"
 EOF
-# Strict host checking disabled - connection is local anyways.
-ssh -o StrictHostKeyChecking=no -t -q $macOS_username@$IP  << EOF
-pwsh -c "Invoke-AtomicTest $ATOMIC_RED_TEAM_TEST_NUMBER -GetPrereqs -PathToAtomicsFolder \"$ATOMICS_FOLDER\""
-# sudo eslogger exec mmap fork | jq
-pwsh -c "Invoke-AtomicTest $ATOMIC_RED_TEAM_TEST_NUMBER -PathToAtomicsFolder "$ATOMICS_FOLDER" -ExecutionLogPath "~/executionlog-$ATOMIC_RED_TEAM_TEST_NUMBER.json" -LoggingModule "Attire-ExecutionLogger" -TimeoutSeconds 60"
-# Add a newline to close the VM after command execution
-# cat ~/executionlog-$ATOMIC_RED_TEAM_TEST_NUMBER.json
-#sleep 500
+
+TEST_START_TIME=$(timestamp)
+
+if [ ! -z "$CUSTOM_COMMAND" ]; then
+    echo "Running custom command $CUSTOM_COMMAND"
+    ssh -o StrictHostKeyChecking=no -t -q $macOS_username@$IP << EOF
+    echo "------------------------------------------------------------"
+    echo "Running custom command $CUSTOM_COMMAND"
+    $CUSTOM_COMMAND
 EOF
+else
+    ssh -o StrictHostKeyChecking=no -t -q $macOS_username@$IP << EOF
+    echo "------------------------------------------------------------"
+    echo "Getting prerequisites for $ATOMIC_RED_TEAM_TEST_NUMBER"
+    pwsh -c "Invoke-AtomicTest $ATOMIC_RED_TEAM_TEST_NUMBER -GetPrereqs -PathToAtomicsFolder \"$ATOMICS_FOLDER\""
+    echo "------------------------------------------------------------"
+    echo "Running $ATOMIC_RED_TEAM_TEST_NUMBER"
+    pwsh -c "Invoke-AtomicTest $ATOMIC_RED_TEAM_TEST_NUMBER -PathToAtomicsFolder "$ATOMICS_FOLDER" -ExecutionLogPath "~/$ATOMIC_RED_TEAM_TEST_NUMBER.json" -LoggingModule "Attire-ExecutionLogger" -TimeoutSeconds 60"
+    echo "Test complete"
+    echo "------------------------------------------------------------"
+EOF
+fi
+
+echo "Type 'exit' to close the VM"
+echo "!!! This is a shell inside the VM !!!"
+ssh -o StrictHostKeyChecking=no -q $macOS_username@$IP
 
 # Stop and clean up the VM if DELETE_TEMP_VM is set
-trap cleanup_vm 0 1 SIGHUP SIGINT SIGQUIT SIGABRT SIGTERM SIGKILL
+cleanup_vm
+#trap cleanup_vm 0 1 SIGHUP SIGINT SIGQUIT SIGKILL
