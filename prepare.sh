@@ -28,6 +28,9 @@ done
 # Add ssh key to authorized hosts on VM
 echo "Enter 'admin' as the password"
 ssh-copy-id -f admin@$IP
+
+#Install powershell, atomic red team and other dependencies
+
 echo "Initial provisioning complete. Perform any manual modifications to the base template"
 echo "then press command + c"
 sleep 500 # time to allow users to make manual changes
