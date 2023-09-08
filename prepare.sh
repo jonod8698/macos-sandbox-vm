@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+VANILLA_IMAGE="ventura-base"
+BASE_IMAGE="ventura-ART-base"
+
 # macOS virtualization framework only works on macOS arm64
 if [[ "$OSTYPE" != "darwin"* || "$(uname -m)" != "arm64" ]]; then
     echo "This feature is only for macOS arm64"
@@ -8,31 +11,37 @@ fi
 
 if ! command -v tart list &> /dev/null
 then
-    echo "<the_command> could not be found"
+    echo "tart is not installed"
     brew install cirruslabs/cli/tart
     exit
 fi
 
 tart stop $BASE_IMAGE 2> /dev/null
-BASE_IMAGE="ventura-ci-vanilla-base"
-tart clone ventura-base $BASE_IMAGE
+tart stop $VANILLA_IMAGE 2> /dev/null
+tart clone $VANILLA_IMAGE $BASE_IMAGE
 tart run $BASE_IMAGE --net-softnet &
-# Because apple doesn't let you check via API if the VM fully started in Ventura
+
+# Check VM is online
 until IP=$(tart ip $BASE_IMAGE 2> /dev/null)
 do
     sleep 1
 done
 
-#Check if host system has ssh key
-
 # Add ssh key to authorized hosts on VM
 echo "Enter 'admin' as the password"
-ssh-copy-id -f admin@$IP
+ssh-copy-id -o StrictHostKeyChecking=no -f admin@$IP
 
 #Install powershell, atomic red team and other dependencies
+ssh -o StrictHostKeyChecking=no -t -q admin@$IP << EOF
+brew install powershell
+# This uses the master branch of ART instead of PowerShell Gallery
+pwsh -c "IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1' -UseBasicParsing);Install-AtomicRedTeam -InstallPath "~/.local/powershell/Modules""
+pwsh -c "New-Item -ItemType File -Path ~/.config/powershell/Microsoft.PowerShell_profile.ps1 -Force"
+pwsh -c "echo 'Import-Module -Name ~/.local/powershell/Modules/invoke-atomicredteam' > ~/.config/powershell/Microsoft.PowerShell_profile.ps1"
+EOF
 
-echo "Initial provisioning complete. Perform any manual modifications to the base template"
+echo "Initial provisioning complete. Perform required  manual modifications to the base template"
 echo "then press command + c"
-sleep 500 # time to allow users to make manual changes
+sleep 6000 # time to allow users to make manual changes
 # stop tart base VM
 tart stop $BASE_IMAGE
