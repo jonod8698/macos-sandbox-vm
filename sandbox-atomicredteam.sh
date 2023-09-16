@@ -21,7 +21,7 @@ temp_image="$os_version-ART-$atomic_red_team_number"
 macos_username="admin"
 delete_temp_vm=true
 atomics_folder="./atomic-red-team/atomics"
-logging_folder="./"
+logging_folder="./output"
 logging_module="Attire-ExecutionLogger"
 
 timestamp() {
@@ -107,6 +107,6 @@ echo "Type 'exit' to close the VM"
 echo "!!! This is a shell inside the VM !!!"
 ssh -o StrictHostKeyChecking=no -q $macos_username@$IP
 
-# Stop and clean up the VM if delete_temp_vm is set
+# Stop and clean up the VM if delete_temp_vm is true
 #cleanup_vm
 trap cleanup_vm 0 1 SIGHUP SIGINT SIGQUIT SIGKILL

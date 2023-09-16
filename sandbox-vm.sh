@@ -3,11 +3,23 @@
 # Parse command line arguments
 URL=""
 FILE_PATH=""
-BASE_IMAGE="ventura-ci-vanilla-base"
+BASE_IMAGE="ventura-ART-base"
 
 # u - URL to open in the VM
 # f - File to run in the VM
 # t - VM duration, default no time limit
+
+if [[ "$OSTYPE" != "darwin"* || "$(uname -m)" != "arm64" ]]; then
+    echo "This feature is only for macOS arm64"
+    exit 1
+fi
+
+if ! command -v tart list &> /dev/null
+then
+    echo "tart is not installed"
+    brew install cirruslabs/cli/tart
+    exit
+fi
 
 while getopts "u:f:" flag
 do
@@ -15,6 +27,8 @@ do
         u) URL=${OPTARG};;
         f) FILE_PATH=${OPTARG};;
         t) TIME_LIMIT=${OPTARG};;
+        h) echo "Usage: $0 [-u URL] [-f file path] [-t time limit] [-h help]"
+           exit 1;;
         *) echo "Invalid option: -$OPTARG" >&2
            exit 1;;
     esac
@@ -30,7 +44,6 @@ else
 fi
 # start cloned vm with isolated networking
 tart run ventura-temp --net-softnet &
-# Because apple doesn't let you check via API if the VM fully started in Ventura
 
 # Get the IP address of the VM
 
