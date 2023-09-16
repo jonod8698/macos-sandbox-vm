@@ -1,19 +1,20 @@
 
 
-
 # Requirements
 Host System
 - macOS arm64 / Apple Silicon
 - tart
-```zsh
-brew install cirruslabs/cli/tart
-```
 
 Base VM
 - PowerShell Core
 - Invoke-AtomicRedTeam
 
 # Quick Start
+Install Tart
+```zsh
+brew install cirruslabs/cli/tart
+```
+
 Download a pre-built Base VM from cirruslabs.
 ```zsh
 tart clone ghcr.io/cirruslabs/macos-ventura-base:latest ventura-base
@@ -24,12 +25,16 @@ Start the VM and configure `softnet` for network isolation.
 tart run ventura-base --net-softnet
 ```
 
-Close the VM. Run `prepare.sh`.
+Close the VM then run `prepare.sh`. Enter the password for the VM when prompted.
 ```zsh
 ./prepare.sh
 ```
 
-
+Run a Test
+```zsh
+./sandbox-atomicredteam.sh -t T1553.004-3 # run test T1553.004-3
+./sandbox-atomicredteam.sh -c 'pwsh -c "Invoke-AtomicTest T1553.004-3 -GetPrereqs -PathToAtomicsFolder "./atomic-red-team/atomics""' # run custom command
+```
 #
 
 
