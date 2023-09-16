@@ -1,0 +1,74 @@
+{
+    "attire-version": "1.1",
+    "execution-data": {
+      "execution-source": "Invoke-Atomicredteam",
+      "execution-id": "ZDVkOGFjNzQtYmI5Ny00NTViLTg5MTgtMzM3ZDI1NWU3MDE4",
+      "execution-category": {
+        "name": "Atomic Red Team",
+        "abbreviation": "ART"
+      },
+      "execution-command": "Invoke-AtomicTest T1027.001 -PathToAtomicsFolder /Users/admin/atomic-red-team/atomics -ExecutionLogPath ~/T1027.001.json -TimeoutSeconds 120 -LoggingModule Attire-ExecutionLogger",
+      "target": {
+        "user": "admin",
+        "host": "admins-Virtual-Machine.local",
+        "ip": "192.168.64.238",
+        "path": "/usr/local/microsoft/powershell/7:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
+      },
+      "time-generated": "2023-09-08T09:41:03.000Z"
+    },
+    "procedures": [
+      {
+        "mitre-technique-id": "T1027.001",
+        "procedure-name": "Pad Binary to Change Hash - Linux/macOS dd",
+        "procedure-id": {
+          "type": "guid",
+          "id": "ffe2346c-abd5-4b45-a713-bf5f1ebd573a"
+        },
+        "procedure-description": "Uses dd to add a zero byte, high-quality random data, and low-quality random data to the binary to change the hash.\n\nUpon successful execution, dd will modify `/tmp/evil-binary`, therefore the expected hash will change.\n",
+        "order": 1,
+        "steps": [
+          {
+            "order": 1,
+            "time-start": "2023-09-08T09:41:03.000Z",
+            "time-stop": "2023-09-08T09:41:03.000Z",
+            "executor": "sh",
+            "command": "dd if=/dev/zero bs=1 count=1 >> /tmp/evil-binary #adds null bytes\ndd if=/dev/random bs=1 count=1 >> /tmp/evil-binary #adds high-quality random data\ndd if=/dev/urandom bs=1 count=1 >> /tmp/evil-binary #adds low-quality random data\n",
+            "output": [
+              {
+                "content": "1+0 records in\n1+0 records out\n1 bytes transferred in 0.000087 secs (11494 bytes/sec)",
+                "level": "STDERR",
+                "type": "console"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "mitre-technique-id": "T1027.001",
+        "procedure-name": "Pad Binary to Change Hash using truncate command - Linux/macOS",
+        "procedure-id": {
+          "type": "guid",
+          "id": "e22a9e89-69c7-410f-a473-e6c212cd2292"
+        },
+        "procedure-description": "Uses truncate to add a byte to the binary to change the hash.\n\nUpon successful execution, truncate will modify `/tmp/evil-binary`, therefore the expected hash will change.\n",
+        "order": 2,
+        "steps": [
+          {
+            "order": 1,
+            "time-start": "2023-09-08T09:41:03.000Z",
+            "time-stop": "2023-09-08T09:41:03.000Z",
+            "executor": "sh",
+            "command": "truncate -s +1 /tmp/evil-binary #adds a byte to the file size\n",
+            "output": [
+              {
+                "content": "",
+                "level": "STDOUT",
+                "type": "console"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

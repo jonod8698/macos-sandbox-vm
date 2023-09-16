@@ -1,3 +1,4 @@
 *.json
 *.swp
 .DS_Store
+!example.json

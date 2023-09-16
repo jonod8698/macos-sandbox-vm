@@ -3,7 +3,7 @@
 # Requirements
 Host System
 - macOS arm64 / Apple Silicon
-- tart
+- [tart](https://github.com/cirruslabs/tart)
 
 Base VM
 - PowerShell Core
@@ -30,12 +30,19 @@ Close the VM then run `prepare.sh`. Enter the password for the VM when prompted.
 ./prepare.sh
 ```
 
-Run a Test
+Run an [atomic red team test](https://atomicredteam.io/tags/#macos). Std out will be shown in the terminal and the execution log will be copied to your host.
 ```zsh
 ./sandbox-atomicredteam.sh -t T1553.004-3 # run test T1553.004-3
+```
+
+You may also run a custom command instead of a specific test.
+```zsh
 ./sandbox-atomicredteam.sh -c 'pwsh -c "Invoke-AtomicTest T1553.004-3 -GetPrereqs -PathToAtomicsFolder "./atomic-red-team/atomics""' # run custom command
 ```
-#
+# Output
+Std out will be shown in the terminal and the execution log will be copied to your host.
+
+By default [Attire-ExecutionLog](https://github.com/redcanaryco/invoke-atomicredteam/wiki/Execution-Logging#attire-logger) is enabled, allowing for direct import into [Vectr](https://github.com/SecurityRiskAdvisors/VECTR). After test execution, the log is copied to the host and can be found in the `output` directory. Example.
 
 
 # Base VM Customization
