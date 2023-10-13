@@ -30,7 +30,7 @@ timestamp() {
 
 cleanup_vm() {
     echo "Copying execution log from VM..."
-    scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 admin@$IP:~/$atomic_red_team_number.json $logging_folder/$atomic_red_team_number-$TEST_START_TIME.json
+    scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 -q $macos_username@$IP:~/$atomic_red_team_number.json $logging_folder/$atomic_red_team_number-$TEST_START_TIME.json
     # use scp to copy any files you want to save from the VM to the host
     if [ "$delete_temp_vm" = true ]; then
         tart stop $temp_image 2> /dev/null
