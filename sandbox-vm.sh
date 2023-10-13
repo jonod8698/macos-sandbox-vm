@@ -21,7 +21,7 @@ then
     exit
 fi
 
-while getopts "u:f:" flag
+while getopts "u:f:t:h" flag
 do
     case "${flag}" in
         u) URL=${OPTARG};;
@@ -46,7 +46,6 @@ fi
 tart run ventura-temp --net-softnet &
 
 # Get the IP address of the VM
-
 until IP=$(tart ip ventura-temp 2> /dev/null)
 do
     sleep 1
