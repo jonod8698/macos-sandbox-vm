@@ -38,10 +38,11 @@ brew install powershell
 pwsh -c "IEX (IWR 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1' -UseBasicParsing);Install-AtomicRedTeam -InstallPath "~/.local/powershell/Modules""
 pwsh -c "New-Item -ItemType File -Path ~/.config/powershell/Microsoft.PowerShell_profile.ps1 -Force"
 pwsh -c "echo 'Import-Module -Name ~/.local/powershell/Modules/invoke-atomicredteam' > ~/.config/powershell/Microsoft.PowerShell_profile.ps1"
+# Add code here to install security tools / EDR. Lima charlie example:
+# curl -o lc_sensor -L https://downloads.limacharlie.io/sensor/mac/arm64
+# chmod +x lc_sensor ; sudo ./lc_sensor -i <key>
 EOF
 
-echo "Initial provisioning complete. Perform required  manual modifications to the base template"
-echo "then press command + c"
-sleep 6000 # time to allow users to make manual changes
-# stop tart base VM
-tart stop $BASE_IMAGE
+echo "Initial provisioning complete. You may perform any required manual modifications to the base template"
+echo "then type 'exit'"
+ssh -o StrictHostKeyChecking=no -t -q admin@$IP # time to allow users to make manual changes
