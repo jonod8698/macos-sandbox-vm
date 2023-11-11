@@ -71,7 +71,7 @@ packer init templates/vanilla-ventura.pkr.hcl
 ```
 
 Update IPSW
-Go to https://ipsw.me/ and pick the latest image for your device. Change from_ipsw  = `<new IPSW link>`
+Go to https://ipsw.me/ and pick the latest image for your device. Change from_ipsw  = `<new IPSW link starting with https://updates.cdn-apple.com/*>`
 
 Run packer build
 ```
