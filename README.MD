@@ -132,3 +132,5 @@ tart clone ventura-ART-base ventura-ART-base-backup
 ### v2
 - [ ] Headless mode
 - [ ] Include Packer
+- [ ] Vectr integration. Initiate test + collection of execution log
+- [ ] Use LLM to generate basic detections
