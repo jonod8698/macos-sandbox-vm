@@ -22,9 +22,6 @@ Installed by `prepare.sh`
 ```zsh
 git clone https://github.com/jonod8698/macos-sandbox-vm.git
 cd macos-sandbox-vm
-```
-
-```zsh
 brew install cirruslabs/cli/tart
 ```
 
