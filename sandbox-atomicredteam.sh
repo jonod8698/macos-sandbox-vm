@@ -30,7 +30,7 @@ timestamp() {
 
 cleanup_vm() {
     echo "Copying execution log from VM..."
-    scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 -q $macos_username@$IP:~/$atomic_red_team_number.json $logging_folder/$atomic_red_team_number-$TEST_START_TIME.json
+    scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -q $macos_username@$IP:~/$atomic_red_team_number.json $logging_folder/$atomic_red_team_number-$TEST_START_TIME.json
     # use scp to copy any files you want to save from the VM to the host
     if [ "$delete_temp_vm" = true ]; then
         tart stop $temp_image 2> /dev/null
@@ -74,7 +74,7 @@ do
 done
 
 # Provision atomic red team test suite
-ssh -o StrictHostKeyChecking=no -t -q $macos_username@$IP  << EOF
+ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -t -q $macos_username@$IP  << EOF
 echo "------------------------------------------------------------"
 echo "Cloning $atomic_red_team_repo"
 pwsh -c "git clone --depth=1 -b $atomic_red_team_branch $atomic_red_team_repo"
@@ -84,13 +84,13 @@ TEST_START_TIME=$(timestamp)
 
 if [[ ! -z "$custom_command" ]]; then
     echo "Running custom command $custom_command"
-    ssh -o StrictHostKeyChecking=no -t -q $macos_username@$IP << EOF
+    ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -t -q $macos_username@$IP << EOF
     echo "------------------------------------------------------------"
     echo "Running custom command $custom_command"
     pwsh -c "Invoke-AtomicTest "T1553.004-3" -PathToAtomicsFolder "./atomic-red-team/atomics" -ExecutionLogPath "~/$atomic_red_team_number.json" -LoggingModule $logging_module" 
 EOF
 else
-    ssh -o StrictHostKeyChecking=no -t -q $macos_username@$IP << EOF
+    ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -t -q $macos_username@$IP << EOF
     echo "------------------------------------------------------------"
     echo "Getting prerequisites for $atomic_red_team_number"
     pwsh -c "Invoke-AtomicTest $atomic_red_team_number -GetPrereqs -PathToAtomicsFolder \"$atomics_folder\""
@@ -105,7 +105,7 @@ fi
 
 echo "Type 'exit' to close the VM"
 echo "!!! This is a shell inside the VM !!!"
-ssh -o StrictHostKeyChecking=no -q $macos_username@$IP
+ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -q $macos_username@$IP
 
 # Stop and clean up the VM if delete_temp_vm is true
 #cleanup_vm

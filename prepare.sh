@@ -29,6 +29,7 @@ done
 
 # Add ssh key to authorized hosts on VM
 echo "Enter 'admin' as the password"
+ssh-keygen -R $IP
 ssh-copy-id -o StrictHostKeyChecking=no -f admin@$IP
 
 #Install powershell, atomic red team and other dependencies
