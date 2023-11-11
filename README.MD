@@ -1,23 +1,29 @@
 Run [Atomic Red Team](https://atomicredteam.io/) tests in a clean macOS VM.
 
 Use this tool to:
-- Generate clean telemetry to create detections.
+- Generate clean telemetry to create detections without ruining your own machine.
 - Speed up the development of macOS Atomic Red Team tests.
 - Easily validate detections without additional hardware or licenses.
 
-<GIF here>
+
 
 ## Requirements
-Host System
+### Host System
 - macOS arm64 / Apple Silicon
 - [Tart](https://github.com/cirruslabs/tart)
 
-Base VM
+### Base VM
+Installed by `prepare.sh`
 - [PowerShell Core](https://github.com/PowerShell/PowerShell)
 - [Invoke-AtomicRedTeam](https://github.com/redcanaryco/invoke-atomicredteam)
 
 ## Quick Start
-1. Install Tart
+1. Clone this repo and install Tart
+```zsh
+git clone https://github.com/jonod8698/macos-sandbox-vm.git
+cd macos-sandbox-vm
+```
+
 ```zsh
 brew install cirruslabs/cli/tart
 ```
@@ -39,15 +45,15 @@ tart run ventura-base --net-softnet
 
 4. Run an [Atomic test](https://atomicredteam.io/tags/#macos).
 ```zsh
-./sandbox-atomicredteam.sh -t T1553.004-3 # run test T1553.004-3
+./sandbox-atomicredteam.sh -t T1569.001-1 # run test 1 of T1569.001 https://atomicredteam.io/execution/T1569.001/
 ```
 
-5. Close the VM using Control + C. By default, the temporary VM will be deleted. To keep the VM, add `-d false`.
+5. Close the VM by typing exit (or Control + C). By default, the temporary VM will be deleted. To keep the VM, add `-d false`.
 
 ## Output
 Std out will be shown in the terminal and the execution log will be copied to your host.
 
-By default [Attire-ExecutionLog](https://github.com/redcanaryco/invoke-atomicredteam/wiki/Execution-Logging#attire-logger) is enabled, allowing for direct import into [Vectr](https://github.com/SecurityRiskAdvisors/VECTR). After test execution, the log is copied to the host and can be found in the `output` directory. Example.
+By default [Attire-ExecutionLog](https://github.com/redcanaryco/invoke-atomicredteam/wiki/Execution-Logging#attire-logger) is enabled, allowing for direct import into [Vectr](https://github.com/SecurityRiskAdvisors/VECTR). After test execution, the log is copied to the host and can be found in the `output` directory.
 
 ## Base VM Customization
 Ideally the Base VM should be created from an IPSW direct from Apple with additional customizations such as EDR and other security tools applied. This allows for the most accurate telemetry and detection validation. 
@@ -65,7 +71,7 @@ packer init templates/vanilla-ventura.pkr.hcl
 ```
 
 Update IPSW
-Go to https://ipsw.me/ and pick the latest image for your device. Change from_ipsw  = <new IPSW link>
+Go to https://ipsw.me/ and pick the latest image for your device. Change from_ipsw  = `<new IPSW link>`
 
 Run packer build
 ```
@@ -94,6 +100,25 @@ Build 'tart-cli.tart' finished after 20 minutes 24 seconds.
 --> tart-cli.tart: ventura-base
 ```
 
+Continue from Step 3 of [Quick Start](#quick-start).
+
+## FAQ
+### Why is this macOS only?
+This tool is designed to run macOS Atomic Red Team tests. It uses Tart to run a macOS VM on macOS. Tart is not available for Windows or Linux.
+
+### How to modify the base VM template after it has been created?
+
+```
+tart run ventura-ART-base
+```
+
+Make changes to the VM then exit the VM. The VM will be saved as a new template.
+
+To keep a backup:
+```
+tart clone ventura-ART-base ventura-ART-base-backup
+```
+
 ## Todo
 ### v1
 - [x] Create a temporary macOS VM
@@ -102,7 +127,7 @@ Build 'tart-cli.tart' finished after 20 minutes 24 seconds.
 - [x] Command Line paramters to customize Atomic red team test
 - [x] Flag for arbitrary commands to be run
 - [x] Copy the execution log from the VM to the host
-- [ ] Base VM prepration guide
+- [x] Base VM prepration guide
 
 ### v2
 - [ ] Headless mode
