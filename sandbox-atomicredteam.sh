@@ -7,8 +7,8 @@
 # - Base VM image: pwsh and invoke-atomicredteam
 #
 # Basic usage: 
-# - ./sandbox-atomicredteam.sh -t T1553.004-3 # run test T1553.004-3
-# - ./sandbox-atomicredteam.sh -c 'pwsh -c "Invoke-AtomicTest T1553.004-3 -GetPrereqs -PathToAtomicsFolder "./atomic-red-team/atomics""' # run custom command
+# - ./sandbox-atomicredteam.sh -t T1569.001-1 # run test T1569.001-1
+# - ./sandbox-atomicredteam.sh -c 'pwsh -c "Invoke-AtomicTest T1569.001-1 -GetPrereqs -PathToAtomicsFolder "./atomic-red-team/atomics""' # run custom command
 #
 
 atomic_red_team_repo="https://github.com/redcanaryco/atomic-red-team.git"
