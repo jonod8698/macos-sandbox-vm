@@ -74,6 +74,7 @@ do
 done
 
 # Provision atomic red team test suite
+ssh-keygen -R $IP
 ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -t -q $macos_username@$IP  << EOF
 echo "------------------------------------------------------------"
 echo "Cloning $atomic_red_team_repo"
