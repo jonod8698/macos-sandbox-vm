@@ -127,7 +127,8 @@ tart clone ventura-ART-base ventura-ART-base-backup
 - [x] Base VM prepration guide
 
 ### v2
-- [ ] Headless mode
-- [ ] Include Packer
+- [ ] VNC mode
+- [ ] Migrate to Python
+- [ ] ESlogger summary
 - [ ] Vectr integration. Initiate test + collection of execution log
 - [ ] Use LLM to generate basic detections
