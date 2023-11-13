@@ -5,7 +5,7 @@ Use this tool to:
 - Speed up the development of macOS Atomic Red Team tests.
 - Easily validate detections without additional hardware or licenses.
 
-![Alt text](<Kapture 2023-11-12 at 01.09.16.gif>)
+![Alt text](<demo.gif>)
 
 ## Requirements
 ### Host System
