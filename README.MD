@@ -52,6 +52,8 @@ Std out will be shown in the terminal and the execution log will be copied to yo
 
 By default [Attire-ExecutionLog](https://github.com/redcanaryco/invoke-atomicredteam/wiki/Execution-Logging#attire-logger) is enabled, allowing for direct import into [Vectr](https://github.com/SecurityRiskAdvisors/VECTR). After test execution, the log is copied to the host and can be found in the `output` directory.
 
+![Vectr](vectr.png)
+
 ## Base VM Customization
 Ideally the Base VM should be created from an IPSW direct from Apple with additional customizations such as EDR and other security tools applied. This allows for the most accurate telemetry and detection validation. 
 
