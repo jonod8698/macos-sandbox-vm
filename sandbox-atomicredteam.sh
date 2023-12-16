@@ -16,8 +16,6 @@ atomic_red_team_branch="master"
 atomic_red_team_number="T1569.001-1"
 custom_command=""
 os_version="ventura"
-base_image=$os_version-ART-base
-temp_image="$os_version-ART-$atomic_red_team_number"
 macos_username="admin"
 delete_temp_vm=true
 atomics_folder="./atomic-red-team/atomics"
@@ -57,6 +55,8 @@ do
     esac
 done
 
+temp_image="$os_version-ART-$atomic_red_team_number"
+base_image=$os_version-ART-base
 temp_image="$os_version-ART-$atomic_red_team_number"
 
 if [[ "$OSTYPE" != "darwin"* || "$(uname -m)" != "arm64" ]]; then
