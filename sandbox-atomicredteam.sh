@@ -13,7 +13,7 @@
 
 atomic_red_team_repo="https://github.com/redcanaryco/atomic-red-team.git"
 atomic_red_team_branch="master"
-atomic_red_team_number="T1553.004-3"
+atomic_red_team_number="T1569.001-1"
 custom_command=""
 os_version="ventura"
 base_image=$os_version-ART-base
@@ -75,7 +75,7 @@ done
 
 # Provision atomic red team test suite
 ssh-keygen -R $IP
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=20 -t -q $macos_username@$IP  << EOF
+ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -o ServerAliveInterval=5 -o ServerAliveCountMax=20 -t -q $macos_username@$IP  << EOF
 echo "------------------------------------------------------------"
 echo "Cloning $atomic_red_team_repo"
 pwsh -c "git clone --depth=1 -b $atomic_red_team_branch $atomic_red_team_repo"
