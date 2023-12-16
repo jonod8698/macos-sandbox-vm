@@ -3,7 +3,7 @@
 # Parse command line arguments
 URL=""
 FILE_PATH=""
-BASE_IMAGE="ventura-ART-base"
+os_version="ventura"
 
 # u - URL to open in the VM
 # f - File to run in the VM
@@ -21,12 +21,13 @@ then
     exit
 fi
 
-while getopts "u:f:t:h" flag
+while getopts "u:f:t:o:h" flag
 do
     case "${flag}" in
         u) URL=${OPTARG};;
         f) FILE_PATH=${OPTARG};;
         t) TIME_LIMIT=${OPTARG};;
+        o) os_version=${OPTARG};;
         h) echo "Usage: $0 [-u URL] [-f file path] [-t time limit] [-h help]"
            exit 1;;
         *) echo "Invalid option: -$OPTARG" >&2
@@ -34,19 +35,21 @@ do
     esac
 done
 
+BASE_IMAGE="$os_version-ART-base"
+temp_vm_name="$os_version-temp"
 
 # Create a temporary VM and run it
-tart clone $BASE_IMAGE ventura-temp
+tart clone $BASE_IMAGE $temp_vm_name
 if [ ! -z "$URL" ]; then
     echo "Starting VM and opening link $URL..."
 else
     echo "Starting VM and running the file $FILE_PATH..."
 fi
 # start cloned vm with isolated networking
-tart run ventura-temp --net-softnet &
+tart run $temp_vm_name --net-softnet &
 
 # Get the IP address of the VM
-until IP=$(tart ip ventura-temp 2> /dev/null)
+until IP=$(tart ip $temp_vm_name 2> /dev/null)
 do
     sleep 1
 done
@@ -72,6 +75,6 @@ EOF
 fi
 
 # Stop and clean up the VM
-tart stop ventura-temp 2> /dev/null
-tart delete ventura-temp
+tart stop $temp_vm_name 2> /dev/null
+tart delete $temp_vm_name
 ssh -R $IP
