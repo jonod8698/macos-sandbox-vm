@@ -55,12 +55,12 @@ By default [Attire-ExecutionLog](https://github.com/redcanaryco/invoke-atomicred
 ## Base VM Customization
 Ideally the Base VM should be created from an IPSW direct from Apple with additional customizations such as EDR and other security tools applied. This allows for the most accurate telemetry and detection validation. 
 
-Requirements
+### Requirements
 ```
 brew install packer
-```
-
 git clone https://github.com/jonod8698/macos-templates.git
+cd macos-templates
+```
 
 Run packer init
 ```
@@ -68,15 +68,17 @@ packer init templates/vanilla-ventura.pkr.hcl
 ```
 
 Update IPSW
-Go to https://ipsw.me/ and pick the latest image for your device. Change from_ipsw  = `<new IPSW link starting with https://updates.cdn-apple.com/*>`
+Go to https://ipsw.me/ and pick the latest image for your device. 
+
+Change `from_ipsw  = <new IPSW link starting with https://updates.cdn-apple.com/*>`
 
 Run packer build
 ```
 packer build templates/vanilla-ventura.pkr.hcl
 ```
 
+The output should look like this:
 ```
-packer build templates/vanilla-ventura.pkr.hcl 
 tart-cli.tart: output will be in this color.
 
 ==> tart-cli.tart: Creating virtual machine...
