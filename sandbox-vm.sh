@@ -54,7 +54,6 @@ do
     sleep 1
 done
 
-
 # SSH into the VM using provided credentials
 echo "Close this VM using command + C"
 ssh -R $IP
