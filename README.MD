@@ -1,5 +1,7 @@
 Run [Atomic Red Team](https://atomicredteam.io/) tests in a clean macOS VM.
 
+To open files and links safely, see [ToffeeApple](https://github.com/jonod8698/ToffeeApple)
+
 Use this tool to:
 - Generate clean telemetry to create detections without ruining your own machine.
 - Speed up the development of macOS Atomic Red Team tests.
