@@ -23,7 +23,7 @@ logging_folder="./output"
 logging_module="Attire-ExecutionLogger"
 
 timestamp() {
-    date -u +"%Y-%m-%dT%H:%M:%SZ"
+    date -u +"%Y-%m-%dT%H_%M_%SZ"
 }
 
 cleanup_vm() {
