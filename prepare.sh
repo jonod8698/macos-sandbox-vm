@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-VANILLA_IMAGE="ventura-base"
-BASE_IMAGE="ventura-ART-base"
+VANILLA_IMAGE="sequoia-base"
+BASE_IMAGE="sequoia-ART-base"
 
 # macOS virtualization framework only works on macOS arm64
 if [[ "$OSTYPE" != "darwin"* || "$(uname -m)" != "arm64" ]]; then

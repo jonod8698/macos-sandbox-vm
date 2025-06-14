@@ -29,12 +29,12 @@ brew install cirruslabs/cli/tart
 
 2. Download a pre-built Base VM from cirruslabs. Note: To build your own Base VM see [Base VM Customization](#base-vm-customization).
 ```zsh
-tart clone ghcr.io/cirruslabs/macos-ventura-base:latest ventura-base
+tart clone ghcr.io/cirruslabs/macos-sequoia-base:latest sequoia-base
 ```
 
 3. Start the VM and configure `softnet` for network isolation.
 ```zsh
-tart run ventura-base --net-softnet
+tart run sequoia-base --net-softnet
 ```
 
 3. Close the VM then run `prepare.sh`. Enter the password for the VM when prompted.
@@ -68,7 +68,7 @@ cd macos-templates
 
 Run packer init
 ```
-packer init templates/vanilla-ventura.pkr.hcl 
+packer init templates/vanilla-sequoia.pkr.hcl 
 ```
 
 (Optional) Update IPSW
@@ -78,7 +78,7 @@ Change `from_ipsw  = <new IPSW link starting with https://updates.cdn-apple.com/
 
 Run packer build
 ```
-packer build templates/vanilla-ventura.pkr.hcl
+packer build templates/vanilla-sequoia.pkr.hcl
 ```
 
 The output should look like this:
@@ -100,7 +100,7 @@ Build 'tart-cli.tart' finished after 20 minutes 24 seconds.
 ==> Wait completed after 20 minutes 24 seconds
 
 ==> Builds finished. The artifacts of successful builds are:
---> tart-cli.tart: ventura-base
+--> tart-cli.tart: sequoia-base
 ```
 
 Continue from Step 3 of [Quick Start](#quick-start).
@@ -112,14 +112,14 @@ This tool is designed to run macOS Atomic Red Team tests. It uses Tart to run a 
 ### How to modify the base VM template after it has been created?
 
 ```
-tart run ventura-ART-base
+tart run sequoia-ART-base
 ```
 
 Make changes to the VM then exit the VM. The VM will be saved as a new template.
 
 To keep a backup:
 ```
-tart clone ventura-ART-base ventura-ART-base-backup
+tart clone sequoia-ART-base sequoia-ART-base-backup
 ```
 
 ## Todo

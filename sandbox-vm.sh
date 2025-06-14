@@ -3,7 +3,7 @@
 # Parse command line arguments
 URL=""
 FILE_PATH=""
-os_version="ventura"
+os_version="sequoia"
 
 # u - URL to open in the VM
 # f - File to run in the VM
